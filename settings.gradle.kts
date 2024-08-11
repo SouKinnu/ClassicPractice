@@ -21,4 +21,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "ClassicPractice"
 include(":app")
- 
+include(":httplibrary")
+include(":baselibrary")
+
