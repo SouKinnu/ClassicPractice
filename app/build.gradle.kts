@@ -6,7 +6,9 @@ plugins {
 android {
     namespace = "com.song.classicpractice"
     compileSdk = 34
-
+    viewBinding {
+        enable = true
+    }
     defaultConfig {
         applicationId = "com.song.classicpractice"
         minSdk = 24
@@ -36,7 +38,8 @@ android {
 }
 
 dependencies {
-
+    implementation(project(":baselibrary"))
+    implementation(project(":httplibrary"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -45,4 +48,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
 }

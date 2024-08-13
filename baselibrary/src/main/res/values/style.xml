@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="BaseDialog" parent="Theme.AppCompat.Dialog">
+        <!-- 设置对话框背景为透明，以便自定义布局的圆角、阴影等效果可以显示 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+        <!-- 去除对话框的标题栏 -->
+        <item name="android:windowNoTitle">true</item>
+
+        <!-- 去除对话框边框，使其可以充满整个窗口 -->
+        <item name="android:windowFrame">@null</item>
+
+        <!-- 设置对话框为浮动窗口，使其显示在所有活动之上 -->
+        <item name="android:windowIsFloating">true</item>
+
+        <!-- 启用背景模糊效果，使对话框更突出 -->
+        <item name="android:backgroundDimEnabled">true</item>
+
+        <!-- 设置模糊背景的透明度（0.0 为全透明，1.0 为全不透明）-->
+        <item name="android:backgroundDimAmount">0.5</item>
+
+        <!-- 对话框的动画效果，可以自定义显示和隐藏的动画 -->
+        <item name="android:windowAnimationStyle">@style/BaseDialogAnimation</item>
+
+        <!-- 控制是否允许对话框外部区域点击关闭对话框 -->
+        <item name="android:clickable">true</item>
+
+        <!-- 设置对话框的默认宽度 -->
+        <item name="android:layout_width">wrap_content</item>
+
+        <!-- 设置对话框的默认高度 -->
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <!-- 定义对话框的动画样式，可以根据需要进行修改 -->
+    <style name="BaseDialogAnimation">
+        <!-- 定义对话框显示时的动画效果 -->
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <!-- 定义对话框隐藏时的动画效果 -->
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+</resources>

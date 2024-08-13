@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_bottom"
+    app:startDestination="@+id/video">
+    <fragment
+        android:id="@+id/video"
+        android:name="com.song.classicpractice.home.video.VideoFragment"
+        android:label="@string/bottom_video"
+        tools:layout="@layout/fragment_video" />
+
+    <fragment
+        android:id="@+id/list"
+        android:name="com.song.classicpractice.home.list.ListFragment"
+        android:label="@string/bottom_list"
+        tools:layout="@layout/fragment_list" />
+
+    <fragment
+        android:id="@+id/car"
+        android:name="com.song.classicpractice.home.car.CarFragment"
+        android:label="@string/bottom_car"
+        tools:layout="@layout/fragment_car" />
+
+    <fragment
+        android:id="@+id/data"
+        android:name="com.song.classicpractice.home.data.DataFragment"
+        android:label="@string/bottom_data"
+        tools:layout="@layout/fragment_data" />
+
+    <fragment
+        android:id="@+id/my"
+        android:name="com.song.classicpractice.home.my.MyFragment"
+        android:label="@string/bottom_my"
+        tools:layout="@layout/fragment_my" />
+
+</navigation>
