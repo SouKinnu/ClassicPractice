@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_margin="5dp"
+    android:background="#D1C8C8"
+    android:orientation="horizontal">
+
+    <CheckBox
+        android:id="@+id/shopCheckbox"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical" />
+
+    <TextView
+        android:id="@+id/shopNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="5dp"
+        android:gravity="center_vertical"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

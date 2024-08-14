@@ -2,22 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ABA0A0"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="10dp">
 
-    <!-- 用于选择所有项的按钮 -->
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/selectAllButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="全选" />
-
-    <!-- 用于取消选择所有项的按钮 -->
-    <Button
-        android:id="@+id/deselectAllButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="全不选" />
+        android:background="#333030"
+        android:text="@string/cancel_select_all"
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCart"

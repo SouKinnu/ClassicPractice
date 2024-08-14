@@ -1,80 +1,111 @@
 package com.song.classicpractice.home.car
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
-import com.song.baselibrary.BaseListPlusAdapter
-import com.song.classicpractice.databinding.CartItemBinding
+import androidx.viewbinding.ViewBinding
+import com.bumptech.glide.Glide
+import com.song.baselibrary.BaseListViewTypeAdapter
+import com.song.classicpractice.databinding.CartGoodsItemBinding
+import com.song.classicpractice.databinding.CartShopItemBinding
 import com.song.httplibrary.data.CartItem
-import com.song.httplibrary.data.ItemType
+import com.song.httplibrary.data.CartItems
+import com.song.httplibrary.data.CartType
+import com.song.httplibrary.data.Item
 
-class CartAdapter : BaseListPlusAdapter<CartItem, CartItemBinding>(CartItemDiffCallback()) {
+class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffCallback()) {
 
-    override fun createBinding(inflater: LayoutInflater, parent: ViewGroup): CartItemBinding {
-        return CartItemBinding.inflate(inflater, parent, false)
+    // 店铺选中状态变化的监听器
+    private var shopCheckedChangeListener: ((String, Boolean) -> Unit)? = null
+
+    // 商品选中状态变化的监听器
+    private var goodsCheckedChangeListener: ((String) -> Unit)? = null
+
+    // 设置店铺选中状态变化的监听器
+    fun shopCheckedChangeListener(listener: (String, Boolean) -> Unit) {
+        shopCheckedChangeListener = listener
     }
 
-    override fun bind(
-        holder: BaseViewHolder<CartItemBinding>,
-        binding: CartItemBinding,
-        item: CartItem,
-        position: Int
-    ) {
-        when (item.type) {
-            ItemType.SHOP -> {
-                // 绑定店铺信息
-                binding.shopNameTextView.text = item.shopName
-                // Glide.with(binding.root).load(item.shopLogoUrl).into(binding.shopLogoImageView)
-
-                // 设置店铺选中状态
-                binding.itemCheckbox.isChecked = item.isItemSelected ?: false
-
-                // 隐藏商品视图，显示店铺视图
-                binding.itemLayout.visibility = View.GONE
-                binding.shopLayout.visibility = View.VISIBLE
-
-                // 处理店铺点击事件，切换店铺下商品的选中状态
-                binding.shopLayout.setOnClickListener {
-                    val isSelected = !(item.isItemSelected ?: false)
-                    binding.itemCheckbox.isChecked = isSelected
-                    notifyItemChanged(position) // 更新店铺状态
-                    notifyItemRangeChanged(position + 1, getItemCount() - position - 1) // 更新商品状态
-                }
-            }
-
-            ItemType.ITEM -> {
-                // 绑定商品信息
-                binding.itemNameTextView.text = item.itemName
-                binding.itemPriceTextView.text = item.itemPrice.toString()
-                binding.itemQuantityTextView.text = item.itemQuantity.toString()
-                binding.itemTotalPriceTextView.text = item.itemTotalPrice.toString()
-                // Glide.with(binding.root).load(item.itemImageUrl).into(binding.itemImageView)
-
-                // 商品选中状态
-                binding.itemCheckbox.isChecked = item.isItemSelected ?: false
-
-                // 处理点击事件，例如切换选中状态
-                binding.itemLayout.setOnClickListener {
-                    val isSelected = !(item.isItemSelected ?: false)
-                    binding.itemCheckbox.isChecked = isSelected
-                    notifyItemChanged(position)
-                }
-
-                // 显示商品视图，隐藏店铺视图
-                binding.itemLayout.visibility = View.VISIBLE
-                binding.shopLayout.visibility = View.GONE
-            }
-        }
+    // 设置商品选中状态变化的监听器
+    fun goodsCheckedChangeListener(listener: (String) -> Unit) {
+        goodsCheckedChangeListener = listener
     }
 
+    companion object {
+        const val SHOP = 0
+        const val ITEM = 1
+    }
+
+    // DiffUtil 用于高效更新 RecyclerView 的数据
     class CartItemDiffCallback : DiffUtil.ItemCallback<CartItem>() {
+        // 判断两个 CartItem 是否是同一个项目（例如通过 ID 判断）
         override fun areItemsTheSame(oldItem: CartItem, newItem: CartItem): Boolean {
-            return oldItem.itemId == newItem.itemId
+            return oldItem.data == newItem.data
         }
 
+        // 判断两个 CartItem 内容是否相同
         override fun areContentsTheSame(oldItem: CartItem, newItem: CartItem): Boolean {
             return oldItem == newItem
+        }
+    }
+
+    // 根据 position 返回对应的 viewType，用于绑定不同的布局
+    override fun getItemViewType(position: Int, item: CartItem): Int {
+        return when (item.type.name) {
+            CartType.SHOP.name -> SHOP  // 店铺类型
+            CartType.ITEM.name -> ITEM  // 商品类型
+            else -> SHOP  // 默认返回店铺类型
+        }
+    }
+
+    // 根据 viewType 创建相应的 ViewBinding
+    override fun onCreateBinding(
+        inflater: LayoutInflater,
+        parent: ViewGroup,
+        viewType: Int
+    ): ViewBinding {
+        return when (viewType) {
+            SHOP -> CartShopItemBinding.inflate(inflater, parent, false)  // 创建店铺项的 ViewBinding
+            ITEM -> CartGoodsItemBinding.inflate(inflater, parent, false)  // 创建商品项的 ViewBinding
+            else -> CartShopItemBinding.inflate(inflater, parent, false)  // 默认创建店铺项的 ViewBinding
+        }
+    }
+
+    // 绑定数据到对应的 ViewBinding
+    override fun onBind(binding: ViewBinding, item: CartItem, position: Int) {
+        when (binding) {
+            is CartShopItemBinding -> {
+                // 处理店铺项的绑定
+                val shop = item.data as CartItems
+                binding.shopNameTextView.text = shop.shopName  // 设置店铺名称
+                binding.shopCheckbox.isChecked = item.isItemSelected ?: true  // 设置店铺选中状态
+
+                // 处理店铺选中状态的变化
+                binding.shopCheckbox.setOnCheckedChangeListener { _, isChecked ->
+                    item.isItemSelected = isChecked
+                    shopCheckedChangeListener?.invoke(shop.shopName, isChecked)  // 通知监听器选中状态的变化
+                }
+            }
+
+            is CartGoodsItemBinding -> {
+                // 处理商品项的绑定
+                val goods = item.data as Item
+                // 绑定商品名称、价格、数量和总价
+                binding.itemNameTextView.text = goods.itemName
+                binding.itemPriceTextView.text = goods.itemPrice.toString()
+                binding.itemQuantityTextView.text = goods.itemQuantity.toString()
+                binding.itemTotalPriceTextView.text = goods.itemTotalPrice.toString()
+                // 使用 Glide 加载商品图片
+                Glide.with(binding.root).load(goods.itemImageUrl).into(binding.itemImageView)
+
+                // 设置商品选中状态
+                binding.itemCheckbox.isChecked = item.isItemSelected ?: true
+                // 处理商品选中状态的变化
+                binding.itemCheckbox.setOnCheckedChangeListener { _, isChecked ->
+                    item.isItemSelected = isChecked
+                    goodsCheckedChangeListener?.invoke(item.shopName)  // 通知监听器选中状态的变化
+                }
+            }
         }
     }
 }

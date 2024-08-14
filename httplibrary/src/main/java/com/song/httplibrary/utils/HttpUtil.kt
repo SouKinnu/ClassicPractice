@@ -10,3 +10,6 @@ package com.song.httplibrary.utils
 const val API_STATUS_OK = 200
 const val TIME_OUT = 30L
 const val BASE_URL = "https://api.oioweb.cn/"
+
+/*** 米游社随机头像 api*/
+const val MI_YOU_SHE_AVATAR = "/api/picture/miyoushe_avatar"

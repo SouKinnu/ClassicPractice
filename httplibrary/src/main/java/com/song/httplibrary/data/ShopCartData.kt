@@ -72,5 +72,5 @@ data class CartSummary(
     val totalPrice: Double,
     val totalDiscount: Double,
     val finalPrice: Double,
-    val isAllSelected: Boolean
+    var isAllSelected: Boolean
 )

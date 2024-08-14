@@ -11,7 +11,7 @@ import androidx.viewbinding.ViewBinding
 /**
  * @Author      : SongJin Yu
  * @Email       : kinnusou@gmail.com
- * @Date        : on 2024/5/19 22:11.
+ * @Date        : 2024/5/19 22:11
  * @Description : 一个通用的基础对话框类，支持 ViewBinding 和可配置的对话框属性。
  *
  * @param VB                     ViewBinding 类型，用于绑定布局。
@@ -38,16 +38,29 @@ open class BaseDialog<VB : ViewBinding>(
     // ViewBinding 实例，用于访问和操作布局中的视图
     var binding: VB = inflate(layoutInflater)
 
+    /**
+     * 生命周期方法：对话框创建时调用
+     * 负责初始化对话框的视图和属性
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 设置对话框的内容视图为绑定的根视图
         setContentView(binding.root)
+
+        // 设置对话框窗口的属性（宽高、位置等）
         setupWindowAttributes()
+
+        // 设置点击对话框外部是否可以取消对话框
         setCanceledOnTouchOutside(canceledOnTouchOutside)
+
+        // 设置对话框是否可以通过返回键取消
         setCancelable(isCancelable)
     }
 
     /**
      * 设置对话框窗口的布局参数，包括宽高、位置等属性。
+     * 通过访问 window 对象，设置相关的 LayoutParams 参数。
      */
     private fun setupWindowAttributes() {
         window?.let { window ->

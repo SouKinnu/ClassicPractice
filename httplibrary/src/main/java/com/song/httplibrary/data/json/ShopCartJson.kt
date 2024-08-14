@@ -10,7 +10,6 @@ import com.song.httplibrary.data.Cart
  * @Description :
  */
 
-
 val shopCartJson = """
 {
   "userId": "123456789",
@@ -24,7 +23,7 @@ val shopCartJson = """
         {
           "itemId": "item001",
           "itemName": "无线蓝牙耳机",
-          "itemImageUrl": "https://example.com/item_image_001.png",
+          "itemImageUrl": "https://bbs-static.miyoushe.com/static/2024/07/15/2cff87c4ba5acd86144a76e39cf4a901_836302926695490472.png",
           "itemPrice": 59.99,
           "itemQuantity": 2,
           "itemTotalPrice": 119.98,
@@ -37,7 +36,7 @@ val shopCartJson = """
         {
           "itemId": "item002",
           "itemName": "便携式充电宝 10000mAh",
-          "itemImageUrl": "https://example.com/item_image_002.png",
+          "itemImageUrl": "https://bbs-static.miyoushe.com/static/2024/03/18/d70f25b443df8029e05cd20a897126a6_7820117047572824878.png",
           "itemPrice": 29.99,
           "itemQuantity": 1,
           "itemTotalPrice": 29.99,
@@ -58,12 +57,12 @@ val shopCartJson = """
         {
           "itemId": "item003",
           "itemName": "男士休闲手表",
-          "itemImageUrl": "https://example.com/item_image_003.png",
+          "itemImageUrl": "https://bbs-static.miyoushe.com/static/2023/11/03/060c8ba17ff372078dcf62d4d8b46d28_7229548510559384850.png",
           "itemPrice": 79.99,
           "itemQuantity": 1,
           "itemTotalPrice": 79.99,
           "itemSku": "皮带款",
-          "isItemSelected": false,
+          "isItemSelected": true,
           "itemDiscount": 15.00,
           "finalPrice": 64.99,
           "itemLink": "https://example.com/product/item003"
@@ -71,7 +70,7 @@ val shopCartJson = """
         {
           "itemId": "item004",
           "itemName": "女士太阳镜",
-          "itemImageUrl": "https://example.com/item_image_004.png",
+          "itemImageUrl": "https://upload-bbs.miyoushe.com/upload/2022/11/17/58da7a2a8695222efb9d42b750734b08_8280567314882516916.png",
           "itemPrice": 25.99,
           "itemQuantity": 3,
           "itemTotalPrice": 77.97,
