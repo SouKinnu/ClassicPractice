@@ -32,7 +32,7 @@ class CarViewModel : BaseViewModel() {
                 cartItems.add(
                     createCartItem(
                         CartType.ITEM,
-                        shop.shopName,
+                        shop.shopId,
                         item.isItemSelected,
                         item
                     )
@@ -47,13 +47,13 @@ class CarViewModel : BaseViewModel() {
     // 辅助函数：根据参数创建 CartItem
     private fun createCartItem(
         type: CartType,
-        shopName: String,
+        shopId: String,
         isItemSelected: Boolean,
         data: Any
     ): CartItem {
         return CartItem(
             type = type,
-            shopName = shopName,
+            shopId = shopId,
             isItemSelected = isItemSelected,
             data = data
         )

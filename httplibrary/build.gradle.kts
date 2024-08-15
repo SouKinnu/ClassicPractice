@@ -46,4 +46,5 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)//Gson转换器 依赖
     implementation(libs.adapter.rxjava3)
+    implementation(libs.glide)
 }

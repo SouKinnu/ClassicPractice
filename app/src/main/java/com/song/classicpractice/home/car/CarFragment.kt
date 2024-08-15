@@ -1,7 +1,5 @@
 package com.song.classicpractice.home.car
 
-import android.util.Log
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.song.baselibrary.BaseFragment
 import com.song.classicpractice.R
@@ -12,103 +10,111 @@ import com.song.httplibrary.data.json.cartData
 
 class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(FragmentCarBinding::inflate) {
 
-    // 使用 lazy 初始化 CartAdapter，延迟加载
-    private val cartAdapter: CartAdapter by lazy {
-        CartAdapter()
-    }
+    /**
+     * @Author : SongJin yu
+     * @Email : kinnusou@gmail.com
+     * @Date : 2024/5/16 14:38
+     * @Description : 购物车界面 Fragment，负责展示和管理购物车中的商品列表。
+     */
 
-    // 初始化视图
+    // 使用 lazy 关键字延迟初始化 CartAdapter，直到第一次使用时才会创建
+    private val cartAdapter: CartAdapter by lazy { CartAdapter() }
+
+    // 初始化视图，当 Fragment 的视图被创建时调用
     override fun initView() {
-        // 设置 RecyclerView 的布局管理器为线性布局管理器
-        binding.recyclerViewCart.layoutManager = LinearLayoutManager(requireContext())
-        // 为 RecyclerView 设置适配器
-        binding.recyclerViewCart.adapter = cartAdapter
+        // 为 RecyclerView 设置线性布局管理器和适配器
+        binding.recyclerViewCart.apply {
+            layoutManager = LinearLayoutManager(requireContext()) // 设置 RecyclerView 为线性布局
+            adapter = cartAdapter // 设置 RecyclerView 的适配器为 cartAdapter
+        }
 
-        // 监听 ViewModel 中购物车项的变化，更新 RecyclerView 数据
-        viewModel.carItem.observe(requireActivity()) {
-            val cartItems = it
-            // 提交购物车项列表数据给适配器
-            cartAdapter.submitList(cartItems)
+        // 监听 ViewModel 中的购物车数据变化，并更新适配器的数据
+        viewModel.carItem.observe(viewLifecycleOwner) {
+            cartAdapter.submitList(it) // 将购物车数据提交给适配器
         }
     }
 
-    // 初始化数据（如果需要）
+    // 初始化数据，这里可以进行数据的预加载
     override fun initData() {
-        // 此方法中可用于初始化数据，目前为空实现
+        // 可在此方法中初始化数据，目前为空实现
     }
 
-    // 初始化事件监听
+    // 初始化事件监听器
     override fun initEvent() {
-        // 设置全选按钮的点击事件
+        // 设置全选按钮的点击事件监听器
         binding.selectAllButton.setOnClickListener {
-            // 调用 selectAllItems 方法处理全选或取消全选操作
-            selectAllItems(cartData.cartSummary.isAllSelected)
+            toggleSelectAll() // 调用 toggleSelectAll 方法切换全选状态
         }
 
-        // 配置 CartAdapter 的事件监听器
+        // 配置购物车适配器的事件监听器
         cartAdapter.apply {
-            // 店铺选中状态变化的监听器
-            shopCheckedChangeListener { shopName, isSelected ->
-                // 更新购物车项列表
-                val updatedItems = cartAdapter.currentList.map { item ->
-                    // 如果当前项的 shopName 与传入的 shopName 匹配，则更新 isItemSelected 状态
-                    if (item.shopName == shopName) {
-                        item.copy(isItemSelected = isSelected)
-                    } else {
-                        // 否则保持原样
-                        item
-                    }
-                }
-                // 提交更新后的列表以刷新界面
-                submitList(updatedItems)
+            // 监听店铺选中状态变化
+            shopCheckedChangeListener { shopId, isSelected ->
+                updateShopSelection(shopId, isSelected) // 更新店铺下所有商品的选中状态
             }
 
-            // 商品选中状态变化的监听器
-            goodsCheckedChangeListener { s ->
-                // 计算当前店铺下的所有商品是否都被选中
-                val result = cartAdapter.currentList
-                    .filter { it.shopName == s }  // 筛选出与传入的 shopName 匹配的商品项
-                    .all { it.isItemSelected == true }  // 检查这些商品项的 isItemSelected 是否都为 true
-
-                // 遍历 currentList 对列表进行映射转换
-                val updatedItems = cartAdapter.currentList.map { item ->
-                    Log.d("CartLog", "initEvent: 商品选中状态 = ${item.isItemSelected}")
-                    // 判断当前项是否为店铺项，且其 shopName 与传入的 s 匹配
-                    if (item.type == CartType.SHOP && item.data is CartItems && (item.data as CartItems).shopName == s) {
-                        // 如果上述条件成立，则将当前店铺的 isItemSelected 更新为 result
-                        item.copy(isItemSelected = result)
-                    } else {
-                        // 否则保持原样
-                        item
-                    }
-                }
-                // 提交更新后的列表以刷新界面
-                submitList(updatedItems)
+            // 监听商品选中状态变化
+            goodsCheckedChangeListener { shopId ->
+                updateGoodsSelection(shopId) // 更新店铺选中状态
             }
         }
     }
 
-    // 处理全选或取消全选操作
-    private fun selectAllItems(isSelected: Boolean) {
-        // 设置全选按钮的文本
+    // 切换全选或取消全选状态
+    private fun toggleSelectAll() {
+        // 获取当前全选状态
+        val isSelected = !cartData.cartSummary.isAllSelected // 修复：切换全选状态
+        // 根据全选状态设置按钮文本
         binding.selectAllButton.text = getSelectAllButtonText(isSelected)
-
-        // 更新购物车项的选中状态
-        val updatedItems = cartAdapter.currentList.map { item ->
-            item.copy(isItemSelected = isSelected)
-        }
-        // 更新购物车数据中的全选状态
-        cartData.cartSummary.isAllSelected = !isSelected
-
-        // 提交更新后的列表
-        cartAdapter.submitList(updatedItems)
+        // 更新所有购物车项的选中状态
+        cartAdapter.submitList(cartAdapter.currentList.map { it.copy(isItemSelected = isSelected) })
+        cartData.cartSummary.isAllSelected = isSelected // 修复：正确更新全选状态
     }
 
-    // 辅助函数：根据选中状态返回全选按钮的文本
+    // 更新店铺下所有商品的选中状态
+    private fun updateShopSelection(shopId: String, isSelected: Boolean) {
+        // 遍历购物车列表，更新对应店铺下所有商品的选中状态
+        val updatedItems = cartAdapter.currentList.map { item ->
+            if (item.shopId == shopId) item.copy(isItemSelected = isSelected) else item
+        }
+        // 提交更新后的列表给适配器
+        cartAdapter.submitList(updatedItems)
+        // 更新全选按钮的状态
+        updateSelectAllButtonState()
+    }
+
+    // 更新店铺的选中状态
+    private fun updateGoodsSelection(shopId: String) {
+        // 检查该店铺下是否所有商品都被选中
+        val allItemsSelected =
+            cartAdapter.currentList.filter { it.shopId == shopId && it.type == CartType.ITEM }
+                .all { it.isItemSelected }
+
+        // 更新购物车列表中对应店铺的选中状态
+        val updatedItems = cartAdapter.currentList.map { item ->
+            if (item.type == CartType.SHOP && (item.data as CartItems).shopId == shopId) {
+                item.copy(isItemSelected = allItemsSelected)
+            } else item
+        }
+        // 提交更新后的列表给适配器
+        cartAdapter.submitList(updatedItems)
+        // 更新全选按钮的状态
+        updateSelectAllButtonState()
+    }
+
+    // 更新全选按钮的文本和状态
+    private fun updateSelectAllButtonState() {
+        // 判断是否所有商品都被选中，并更新全选状态
+        val allSelected = cartAdapter.currentList.all { it.isItemSelected }
+        cartData.cartSummary.isAllSelected = allSelected
+        // 根据当前全选状态设置按钮文本
+        binding.selectAllButton.text = getSelectAllButtonText(allSelected)
+    }
+
+    // 根据选中状态返回全选按钮的文本
     private fun getSelectAllButtonText(isSelected: Boolean): String {
-        return if (isSelected)
-            ContextCompat.getString(requireContext(), R.string.cancel_select_all)
-        else
-            ContextCompat.getString(requireContext(), R.string.select_all)
+        return getString(
+            if (isSelected) R.string.cancel_select_all else R.string.select_all
+        )
     }
 }

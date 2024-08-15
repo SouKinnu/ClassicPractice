@@ -15,6 +15,13 @@ import com.song.httplibrary.data.Item
 
 class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffCallback()) {
 
+    /**
+     * @Author : SongJin yu
+     * @Email : kinnusou@gmail.com
+     * @Date : 2024/5/16 14:38
+     * @Description : 购物车适配器，用于展示店铺和商品的列表项，支持多布局和选中状态的管理。
+     */
+
     // 店铺选中状态变化的监听器
     private var shopCheckedChangeListener: ((String, Boolean) -> Unit)? = null
 
@@ -32,8 +39,8 @@ class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffC
     }
 
     companion object {
-        const val SHOP = 0
-        const val ITEM = 1
+        const val SHOP = 0  // 店铺类型标识
+        const val ITEM = 1  // 商品类型标识
     }
 
     // DiffUtil 用于高效更新 RecyclerView 的数据
@@ -52,8 +59,8 @@ class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffC
     // 根据 position 返回对应的 viewType，用于绑定不同的布局
     override fun getItemViewType(position: Int, item: CartItem): Int {
         return when (item.type.name) {
-            CartType.SHOP.name -> SHOP  // 店铺类型
-            CartType.ITEM.name -> ITEM  // 商品类型
+            CartType.SHOP.name -> SHOP  // 返回店铺类型
+            CartType.ITEM.name -> ITEM  // 返回商品类型
             else -> SHOP  // 默认返回店铺类型
         }
     }
@@ -78,12 +85,12 @@ class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffC
                 // 处理店铺项的绑定
                 val shop = item.data as CartItems
                 binding.shopNameTextView.text = shop.shopName  // 设置店铺名称
-                binding.shopCheckbox.isChecked = item.isItemSelected ?: true  // 设置店铺选中状态
-
+                binding.shopCheckbox.isChecked = item.isItemSelected  // 设置店铺选中状态
+                binding.shopCheckbox.setOnCheckedChangeListener(null)
                 // 处理店铺选中状态的变化
                 binding.shopCheckbox.setOnCheckedChangeListener { _, isChecked ->
                     item.isItemSelected = isChecked
-                    shopCheckedChangeListener?.invoke(shop.shopName, isChecked)  // 通知监听器选中状态的变化
+                    shopCheckedChangeListener?.invoke(shop.shopId, isChecked)  // 通知监听器选中状态的变化
                 }
             }
 
@@ -97,13 +104,13 @@ class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffC
                 binding.itemTotalPriceTextView.text = goods.itemTotalPrice.toString()
                 // 使用 Glide 加载商品图片
                 Glide.with(binding.root).load(goods.itemImageUrl).into(binding.itemImageView)
-
+                binding.itemCheckbox.setOnCheckedChangeListener(null)
                 // 设置商品选中状态
-                binding.itemCheckbox.isChecked = item.isItemSelected ?: true
+                binding.itemCheckbox.isChecked = item.isItemSelected
                 // 处理商品选中状态的变化
                 binding.itemCheckbox.setOnCheckedChangeListener { _, isChecked ->
                     item.isItemSelected = isChecked
-                    goodsCheckedChangeListener?.invoke(item.shopName)  // 通知监听器选中状态的变化
+                    goodsCheckedChangeListener?.invoke(item.shopId)  // 通知监听器选中状态的变化
                 }
             }
         }
