@@ -11,7 +11,12 @@ import com.song.classicpractice.databinding.ListTitleItemBinding
 import com.song.httplibrary.data.Avatar
 import com.song.httplibrary.data.ListItem
 import com.song.httplibrary.data.ListType
-
+/**
+ * @Author      : SongJin Yu
+ * @Email       : kinnusou@gmail.com
+ * @Date        : on 2024/5/17 21:17.
+ * @Description : 代表一个视频的评论数据，包括视频 ID、评论列表和总评论数。
+ */
 // 自定义适配器，用于处理多种类型的列表项
 class ListAdapter : BaseListViewTypeAdapter<ListItem, ViewBinding>(ListItemDiffCallback()) {
 

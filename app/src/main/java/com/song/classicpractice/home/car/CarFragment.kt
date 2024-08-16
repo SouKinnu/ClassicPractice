@@ -1,5 +1,7 @@
 package com.song.classicpractice.home.car
 
+import android.view.LayoutInflater
+import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.song.baselibrary.BaseFragment
 import com.song.classicpractice.R
@@ -8,19 +10,20 @@ import com.song.httplibrary.data.CartItems
 import com.song.httplibrary.data.CartType
 import com.song.httplibrary.data.json.cartData
 
+/**
+ * @Author      : SongJin Yu
+ * @Email       : kinnusou@gmail.com
+ * @Date        : 2024/5/16 14:38
+ * @Description : 购物车界面 Fragment，负责展示和管理购物车中的商品列表。
+ */
 class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(FragmentCarBinding::inflate) {
-
-    /**
-     * @Author : SongJin yu
-     * @Email : kinnusou@gmail.com
-     * @Date : 2024/5/16 14:38
-     * @Description : 购物车界面 Fragment，负责展示和管理购物车中的商品列表。
-     */
 
     // 使用 lazy 关键字延迟初始化 CartAdapter，直到第一次使用时才会创建
     private val cartAdapter: CartAdapter by lazy { CartAdapter() }
 
-    // 初始化视图，当 Fragment 的视图被创建时调用
+    /**
+     * 初始化视图，当 Fragment 的视图被创建时调用
+     */
     override fun initView() {
         // 为 RecyclerView 设置线性布局管理器和适配器
         binding.recyclerViewCart.apply {
@@ -34,12 +37,16 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(FragmentCarBi
         }
     }
 
-    // 初始化数据，这里可以进行数据的预加载
+    /**
+     * 初始化数据，这里可以进行数据的预加载
+     */
     override fun initData() {
         // 可在此方法中初始化数据，目前为空实现
     }
 
-    // 初始化事件监听器
+    /**
+     * 初始化事件监听器
+     */
     override fun initEvent() {
         // 设置全选按钮的点击事件监听器
         binding.selectAllButton.setOnClickListener {
@@ -60,18 +67,25 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(FragmentCarBi
         }
     }
 
-    // 切换全选或取消全选状态
+    /**
+     * 切换全选或取消全选状态
+     */
     private fun toggleSelectAll() {
         // 获取当前全选状态
-        val isSelected = !cartData.cartSummary.isAllSelected // 修复：切换全选状态
+        val isSelected = !cartData.cartSummary.isAllSelected
         // 根据全选状态设置按钮文本
         binding.selectAllButton.text = getSelectAllButtonText(isSelected)
         // 更新所有购物车项的选中状态
         cartAdapter.submitList(cartAdapter.currentList.map { it.copy(isItemSelected = isSelected) })
-        cartData.cartSummary.isAllSelected = isSelected // 修复：正确更新全选状态
+        cartData.cartSummary.isAllSelected = isSelected // 正确更新全选状态
     }
 
-    // 更新店铺下所有商品的选中状态
+    /**
+     * 更新店铺下所有商品的选中状态
+     *
+     * @param shopId  店铺 ID
+     * @param isSelected 店铺是否被选中
+     */
     private fun updateShopSelection(shopId: String, isSelected: Boolean) {
         // 遍历购物车列表，更新对应店铺下所有商品的选中状态
         val updatedItems = cartAdapter.currentList.map { item ->
@@ -83,7 +97,11 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(FragmentCarBi
         updateSelectAllButtonState()
     }
 
-    // 更新店铺的选中状态
+    /**
+     * 更新店铺的选中状态
+     *
+     * @param shopId 店铺 ID
+     */
     private fun updateGoodsSelection(shopId: String) {
         // 检查该店铺下是否所有商品都被选中
         val allItemsSelected =
@@ -102,7 +120,9 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(FragmentCarBi
         updateSelectAllButtonState()
     }
 
-    // 更新全选按钮的文本和状态
+    /**
+     * 更新全选按钮的文本和状态
+     */
     private fun updateSelectAllButtonState() {
         // 判断是否所有商品都被选中，并更新全选状态
         val allSelected = cartAdapter.currentList.all { it.isItemSelected }
@@ -111,7 +131,12 @@ class CarFragment : BaseFragment<FragmentCarBinding, CarViewModel>(FragmentCarBi
         binding.selectAllButton.text = getSelectAllButtonText(allSelected)
     }
 
-    // 根据选中状态返回全选按钮的文本
+    /**
+     * 根据选中状态返回全选按钮的文本
+     *
+     * @param isSelected 当前全选状态
+     * @return 全选按钮的文本
+     */
     private fun getSelectAllButtonText(isSelected: Boolean): String {
         return getString(
             if (isSelected) R.string.cancel_select_all else R.string.select_all

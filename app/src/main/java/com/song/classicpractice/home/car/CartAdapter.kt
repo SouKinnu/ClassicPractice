@@ -13,14 +13,13 @@ import com.song.httplibrary.data.CartItems
 import com.song.httplibrary.data.CartType
 import com.song.httplibrary.data.Item
 
+/**
+ * @Author      : SongJin Yu
+ * @Email       : kinnusou@gmail.com
+ * @Date        : 2024/5/16 14:38
+ * @Description : 购物车适配器，用于展示店铺和商品的列表项，支持多布局和选中状态的管理。
+ */
 class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffCallback()) {
-
-    /**
-     * @Author : SongJin yu
-     * @Email : kinnusou@gmail.com
-     * @Date : 2024/5/16 14:38
-     * @Description : 购物车适配器，用于展示店铺和商品的列表项，支持多布局和选中状态的管理。
-     */
 
     // 店铺选中状态变化的监听器
     private var shopCheckedChangeListener: ((String, Boolean) -> Unit)? = null
@@ -28,12 +27,20 @@ class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffC
     // 商品选中状态变化的监听器
     private var goodsCheckedChangeListener: ((String) -> Unit)? = null
 
-    // 设置店铺选中状态变化的监听器
+    /**
+     * 设置店铺选中状态变化的监听器
+     *
+     * @param listener 监听器回调，当店铺选中状态变化时调用
+     */
     fun shopCheckedChangeListener(listener: (String, Boolean) -> Unit) {
         shopCheckedChangeListener = listener
     }
 
-    // 设置商品选中状态变化的监听器
+    /**
+     * 设置商品选中状态变化的监听器
+     *
+     * @param listener 监听器回调，当商品选中状态变化时调用
+     */
     fun goodsCheckedChangeListener(listener: (String) -> Unit) {
         goodsCheckedChangeListener = listener
     }
@@ -43,7 +50,9 @@ class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffC
         const val ITEM = 1  // 商品类型标识
     }
 
-    // DiffUtil 用于高效更新 RecyclerView 的数据
+    /**
+     * DiffUtil 用于高效更新 RecyclerView 的数据
+     */
     class CartItemDiffCallback : DiffUtil.ItemCallback<CartItem>() {
         // 判断两个 CartItem 是否是同一个项目（例如通过 ID 判断）
         override fun areItemsTheSame(oldItem: CartItem, newItem: CartItem): Boolean {
@@ -56,7 +65,13 @@ class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffC
         }
     }
 
-    // 根据 position 返回对应的 viewType，用于绑定不同的布局
+    /**
+     * 根据 position 返回对应的 viewType，用于绑定不同的布局
+     *
+     * @param position 列表项的位置
+     * @param item     列表项的数据
+     * @return 视图类型标识
+     */
     override fun getItemViewType(position: Int, item: CartItem): Int {
         return when (item.type.name) {
             CartType.SHOP.name -> SHOP  // 返回店铺类型
@@ -65,7 +80,14 @@ class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffC
         }
     }
 
-    // 根据 viewType 创建相应的 ViewBinding
+    /**
+     * 根据 viewType 创建相应的 ViewBinding
+     *
+     * @param inflater 布局填充器
+     * @param parent   父视图组
+     * @param viewType 视图类型
+     * @return 对应的 ViewBinding 实例
+     */
     override fun onCreateBinding(
         inflater: LayoutInflater,
         parent: ViewGroup,
@@ -78,7 +100,13 @@ class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffC
         }
     }
 
-    // 绑定数据到对应的 ViewBinding
+    /**
+     * 绑定数据到对应的 ViewBinding
+     *
+     * @param binding  ViewBinding 实例
+     * @param item     列表项的数据
+     * @param position 列表项的位置
+     */
     override fun onBind(binding: ViewBinding, item: CartItem, position: Int) {
         when (binding) {
             is CartShopItemBinding -> {
@@ -86,7 +114,7 @@ class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffC
                 val shop = item.data as CartItems
                 binding.shopNameTextView.text = shop.shopName  // 设置店铺名称
                 binding.shopCheckbox.isChecked = item.isItemSelected  // 设置店铺选中状态
-                binding.shopCheckbox.setOnCheckedChangeListener(null)
+                binding.shopCheckbox.setOnCheckedChangeListener(null) // 移除旧的监听器
                 // 处理店铺选中状态的变化
                 binding.shopCheckbox.setOnCheckedChangeListener { _, isChecked ->
                     item.isItemSelected = isChecked
@@ -104,7 +132,7 @@ class CartAdapter : BaseListViewTypeAdapter<CartItem, ViewBinding>(CartItemDiffC
                 binding.itemTotalPriceTextView.text = goods.itemTotalPrice.toString()
                 // 使用 Glide 加载商品图片
                 Glide.with(binding.root).load(goods.itemImageUrl).into(binding.itemImageView)
-                binding.itemCheckbox.setOnCheckedChangeListener(null)
+                binding.itemCheckbox.setOnCheckedChangeListener(null) // 移除旧的监听器
                 // 设置商品选中状态
                 binding.itemCheckbox.isChecked = item.isItemSelected
                 // 处理商品选中状态的变化

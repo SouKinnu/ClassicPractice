@@ -1,4 +1,4 @@
-package com.song.classicpractice.home.video
+package com.song.classicpractice.home.video.viewpager.player
 
 import com.song.baselibrary.BaseViewModel
 /**
@@ -7,5 +7,5 @@ import com.song.baselibrary.BaseViewModel
  * @Date        : on 2024/5/17 21:17.
  * @Description :
  */
-class VideoViewModel : BaseViewModel() {
+class PlayerViewModel : BaseViewModel() {
 }

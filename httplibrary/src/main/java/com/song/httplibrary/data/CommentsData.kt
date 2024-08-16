@@ -31,7 +31,7 @@ data class Comment(
     val userAvatarUrl: String,
     val content: String,
     val timestamp: String,
-    val isExpanded: Boolean,
+    var isExpanded: Boolean,
     val likes: Int,
     val isLiked: Boolean,
     val replies: List<Reply>
